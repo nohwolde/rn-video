@@ -109,6 +109,8 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
       localSourceEncryptionKeyScheme,
       minLoadRetryCount,
       bufferConfig,
+      onSkipToNext,
+      onPlayPrevious,
       ...rest
     },
     ref,
@@ -857,6 +859,8 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
             onControlsVisibilityChange ? _onControlsVisibilityChange : undefined
           }
           viewType={_viewType}
+          onSkipToNext={onSkipToNext}
+          onPlayPrevious={onPlayPrevious}
         />
         {_renderPoster()}
       </View>

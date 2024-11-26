@@ -135,6 +135,22 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     @objc var onAudioTracks: RCTDirectEventBlock?
     @objc var onTextTrackDataChanged: RCTDirectEventBlock?
 
+    private func setupRemoteCommandCenter() {
+        let nowPlayingManager = NowPlayingInfoCenterManager.shared
+
+        nowPlayingManager.setNextTrackHandler { [weak self] in
+            guard let self = self else { return }
+            self.onSkipToNext?([:])
+        }
+
+        nowPlayingManager.setPreviousTrackHandler { [weak self] in
+            guard let self = self else { return }
+            self.onPlayPrevious?([:])
+        }
+
+        nowPlayingManager.registerCommandTargets()
+    }
+
     @objc
     func _onPictureInPictureEnter() {
         onPictureInPictureStatusChanged?(["isActive": NSNumber(value: true)])
@@ -256,6 +272,7 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setupRemoteCommandCenter()
         #if USE_GOOGLE_IMA
             _imaAdsManager = RCTIMAAdsManager(video: self, pipEnabled: isPipEnabled)
         #endif

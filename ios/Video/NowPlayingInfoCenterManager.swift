@@ -19,8 +19,23 @@ class NowPlayingInfoCenterManager {
     private var playbackPositionTarget: Any?
     private var seekTarget: Any?
     private var togglePlayPauseTarget: Any?
+    private var nextTrackTarget: Any?
+    private var previousTrackTarget: Any?
+    
+    // Add callback properties
+    private var onNextTrack: (() -> Void)?
+    private var onPreviousTrack: (() -> Void)?
 
     private let remoteCommandCenter = MPRemoteCommandCenter.shared()
+
+    // Add setter methods for callbacks
+    func setNextTrackHandler(_ handler: @escaping () -> Void) {
+        onNextTrack = handler
+    }
+    
+    func setPreviousTrackHandler(_ handler: @escaping () -> Void) {
+        onPreviousTrack = handler
+    }
 
     private var receivingRemoveControlEvents = false {
         didSet {
@@ -174,6 +189,22 @@ class NowPlayingInfoCenterManager {
             return .commandFailed
         }
 
+        nextTrackTarget = remoteCommandCenter.nextTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            self.onNextTrack?()
+            return .success
+        }
+
+        previousTrackTarget = remoteCommandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            guard let self = self else { return .commandFailed }
+            self.onPreviousTrack?()
+            return .success
+        }
+
+        // Disable skip forward and backward commands
+        remoteCommandCenter.skipForwardCommand.isEnabled = false
+        remoteCommandCenter.skipBackwardCommand.isEnabled = false
+
         // Handler for togglePlayPauseCommand, sent by Apple's Earpods wired headphones
         togglePlayPauseTarget = remoteCommandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
             guard let self, let player = self.currentPlayer else {
@@ -195,6 +226,8 @@ class NowPlayingInfoCenterManager {
         remoteCommandCenter.pauseCommand.removeTarget(pauseTarget)
         remoteCommandCenter.skipForwardCommand.removeTarget(skipForwardTarget)
         remoteCommandCenter.skipBackwardCommand.removeTarget(skipBackwardTarget)
+        remoteCommandCenter.nextTrackCommand.removeTarget(nextTrackTarget)
+        remoteCommandCenter.previousTrackCommand.removeTarget(previousTrackTarget)
         remoteCommandCenter.changePlaybackPositionCommand.removeTarget(playbackPositionTarget)
         remoteCommandCenter.togglePlayPauseCommand.removeTarget(togglePlayPauseTarget)
     }
