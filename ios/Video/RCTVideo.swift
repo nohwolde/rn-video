@@ -142,12 +142,12 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
         nowPlayingManager.setNextTrackHandler { [weak self] in
             guard let self = self else { return }
-            _onSkipToNext()
+            self._onSkipToNext()
         }
 
         nowPlayingManager.setPreviousTrackHandler { [weak self] in
             guard let self = self else { return }
-            _onPlayPrevious()
+            self._onPlayPrevious()
         }
 
         nowPlayingManager.registerCommandTargets()
@@ -215,6 +215,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     }
 
     init(eventDispatcher: RCTEventDispatcher!) {
+        _onSkipToNext = nil
+        _onPlayPrevious = nil
         super.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         ReactNativeVideoManager.shared.registerView(newInstance: self)
         #if USE_GOOGLE_IMA
@@ -274,6 +276,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     }
 
     required init?(coder aDecoder: NSCoder) {
+        _onSkipToNext = nil
+        _onPlayPrevious = nil
         super.init(coder: aDecoder)
         #if USE_GOOGLE_IMA
             _imaAdsManager = RCTIMAAdsManager(video: self, pipEnabled: isPipEnabled)
