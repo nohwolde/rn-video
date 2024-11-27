@@ -142,12 +142,12 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
         nowPlayingManager.setNextTrackHandler { [weak self] in
             guard let self = self else { return }
-            self._onSkipToNext()
+            self._onSkipToNext?()
         }
 
         nowPlayingManager.setPreviousTrackHandler { [weak self] in
             guard let self = self else { return }
-            self._onPlayPrevious()
+            self._onPlayPrevious?()
         }
 
         nowPlayingManager.registerCommandTargets()
