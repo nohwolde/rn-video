@@ -29,11 +29,11 @@ class NowPlayingInfoCenterManager {
     private let remoteCommandCenter = MPRemoteCommandCenter.shared()
 
     // Add setter methods for callbacks
-    func setNextTrackHandler(_ handler: @escaping () -> Void) {
+    public func setNextTrackHandler(_ handler: @escaping () -> Void) {
         onNextTrack = handler
     }
     
-    func setPreviousTrackHandler(_ handler: @escaping () -> Void) {
+    public func setPreviousTrackHandler(_ handler: @escaping () -> Void) {
         onPreviousTrack = handler
     }
 
@@ -132,7 +132,7 @@ class NowPlayingInfoCenterManager {
         )
     }
 
-    private func registerCommandTargets() {
+    public func registerCommandTargets() {
         invalidateCommandTargets()
 
         playTarget = remoteCommandCenter.playCommand.addTarget { [weak self] _ in

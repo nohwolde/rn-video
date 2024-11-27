@@ -61,6 +61,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     private var _presentingViewController: UIViewController?
     private var _startPosition: Float64 = -1
     private var _showNotificationControls = false
+    private var _onSkipToNext: (() -> Void)
+    private var _onPlayPrevious: (() -> Void)
     // Buffer last bitrate value received. Initialized to -2 to ensure -1 (sometimes reported by AVPlayer) is not missed
     private var _lastBitrate = -2.0
     private var _pictureInPictureEnabled = false {
@@ -140,12 +142,12 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
         nowPlayingManager.setNextTrackHandler { [weak self] in
             guard let self = self else { return }
-            self.onSkipToNext?([:])
+            self._onSkipToNext?()
         }
 
         nowPlayingManager.setPreviousTrackHandler { [weak self] in
             guard let self = self else { return }
-            self.onPlayPrevious?([:])
+            self._onPlayPrevious?()
         }
 
         nowPlayingManager.registerCommandTargets()
@@ -264,6 +266,7 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
             name: AVAudioSession.routeChangeNotification,
             object: nil
         )
+        setupRemoteCommandCenter()
         _playerObserver._handlers = self
         #if USE_VIDEO_CACHING
             _videoCache.playerItemPrepareText = playerItemPrepareText
@@ -272,7 +275,6 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupRemoteCommandCenter()
         #if USE_GOOGLE_IMA
             _imaAdsManager = RCTIMAAdsManager(video: self, pipEnabled: isPipEnabled)
         #endif
@@ -1153,6 +1155,18 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
                 self.usePlayerLayer()
             }
         }
+    }
+
+    // Setter for onSkipToNext
+    @objc
+    func setOnSkipToNext(_ callback: @escaping () -> Void) {
+        _onSkipToNext = callback
+    }
+
+    // Setter for onPlayPrevious
+    @objc
+    func setOnPlayPrevious(_ callback: @escaping () -> Void) {
+        _onPlayPrevious = callback
     }
 
     @objc
