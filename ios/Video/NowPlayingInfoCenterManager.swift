@@ -23,8 +23,8 @@ class NowPlayingInfoCenterManager {
     private var previousTrackTarget: Any?
     
     // Add callback properties
-    private var onNextTrack: (() -> Void)?
-    private var onPreviousTrack: (() -> Void)?
+    private var onNextTrack: () -> Void?
+    private var onPreviousTrack: () -> Void?
 
     private let remoteCommandCenter = MPRemoteCommandCenter.shared()
 
