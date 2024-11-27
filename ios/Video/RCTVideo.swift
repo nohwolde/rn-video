@@ -140,15 +140,9 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     private func setupRemoteCommandCenter() {
         let nowPlayingManager = NowPlayingInfoCenterManager.shared
 
-        nowPlayingManager.setNextTrackHandler { [weak self] in
-            guard let self = self else { return }
-            self._onSkipToNext?()
-        }
+        nowPlayingManager.setNextTrackHandler(handler: _onSkipToNext)
 
-        nowPlayingManager.setPreviousTrackHandler { [weak self] in
-            guard let self = self else { return }
-            self._onPlayPrevious?()
-        }
+        nowPlayingManager.setPreviousTrackHandler(handler: _onPlayPrevious)
 
         nowPlayingManager.registerCommandTargets()
     }
