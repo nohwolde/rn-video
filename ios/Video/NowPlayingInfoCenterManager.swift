@@ -29,11 +29,11 @@ class NowPlayingInfoCenterManager {
     private let remoteCommandCenter = MPRemoteCommandCenter.shared()
 
     // Add setter methods for callbacks
-    public func setNextTrackHandler(handler: () -> Void) {
+    public func setNextTrackHandler(handler: @escaping () -> Void) {
         onNextTrack = handler
     }
     
-    public func setPreviousTrackHandler(handler: () -> Void) {
+    public func setPreviousTrackHandler(handler: @escaping () -> Void) {
         onPreviousTrack = handler
     }
 
