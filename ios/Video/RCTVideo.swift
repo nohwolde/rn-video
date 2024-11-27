@@ -61,8 +61,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     private var _presentingViewController: UIViewController?
     private var _startPosition: Float64 = -1
     private var _showNotificationControls = false
-    private var _onSkipToNext: (() -> Void)
-    private var _onPlayPrevious: (() -> Void)
+    private var _onSkipToNext: (() -> Void)?
+    private var _onPlayPrevious: (() -> Void)?
     // Buffer last bitrate value received. Initialized to -2 to ensure -1 (sometimes reported by AVPlayer) is not missed
     private var _lastBitrate = -2.0
     private var _pictureInPictureEnabled = false {
