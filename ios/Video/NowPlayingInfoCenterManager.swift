@@ -23,8 +23,8 @@ class NowPlayingInfoCenterManager {
     private var previousTrackTarget: Any?
     
     // Add callback properties
-    private var onNextTrack: () -> Void?
-    private var onPreviousTrack: () -> Void?
+    private var onNextTrack: () -> Void
+    private var onPreviousTrack: () -> Void
 
     private let remoteCommandCenter = MPRemoteCommandCenter.shared()
 
@@ -191,13 +191,13 @@ class NowPlayingInfoCenterManager {
 
         nextTrackTarget = remoteCommandCenter.nextTrackCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            self.onNextTrack?()
+            self.onNextTrack()
             return .success
         }
 
         previousTrackTarget = remoteCommandCenter.previousTrackCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            self.onPreviousTrack?()
+            self.onPreviousTrack()
             return .success
         }
 
