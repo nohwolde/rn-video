@@ -268,8 +268,6 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     }
 
     required init?(coder aDecoder: NSCoder) {
-        _onSkipToNext = nil
-        _onPlayPrevious = nil
         super.init(coder: aDecoder)
         #if USE_GOOGLE_IMA
             _imaAdsManager = RCTIMAAdsManager(video: self, pipEnabled: isPipEnabled)
