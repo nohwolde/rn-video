@@ -268,7 +268,6 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setupRemoteCommandCenter()
         #if USE_GOOGLE_IMA
             _imaAdsManager = RCTIMAAdsManager(video: self, pipEnabled: isPipEnabled)
         #endif
@@ -510,6 +509,7 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
             if _showNotificationControls {
                 // We need to register player after we set current item and only for init
                 NowPlayingInfoCenterManager.shared.registerPlayer(player: _player!)
+                setupRemoteCommandCenter()
             }
         } else {
             #if !os(tvOS) && !os(visionOS)
