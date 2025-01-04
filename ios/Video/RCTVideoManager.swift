@@ -110,8 +110,4 @@ class RCTVideoManager: RCTViewManager {
             videoView?.getCurrentPlaybackTime(resolve, reject)
         })
     }
-
-    override class func requiresMainQueueSetup() -> Bool {
-        return true
-    }
 }
