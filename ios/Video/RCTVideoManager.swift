@@ -4,7 +4,7 @@ import React
 @objc(RCTVideoManager)
 class RCTVideoManager: RCTViewManager {
     override func view() -> UIView! {
-        return RCTVideo(eventDispatcher: self.bridge.eventDispatcher()!)
+        return RCTVideo(eventDispatcher: self.bridge.eventDispatcher() as? RCTEventDispatcher)
     }
 
     override static func requiresMainQueueSetup() -> Bool {
