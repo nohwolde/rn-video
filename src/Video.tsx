@@ -153,6 +153,11 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
         if (!_source) {
           return undefined;
         }
+
+        const isLocalAssetFile =
+          typeof _source === 'number' ||
+          ('uri' in _source && typeof _source.uri === 'number');
+
         const resolvedSource = resolveAssetSourceForVideo(_source);
         let uri = resolvedSource.uri || '';
         if (uri && uri.match(/^\//)) {
@@ -228,6 +233,7 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
           uri,
           isNetwork,
           isAsset,
+          isLocalAssetFile,
           shouldCache: resolvedSource.shouldCache || false,
           type: resolvedSource.type || '',
           mainVer: resolvedSource.mainVer || 0,
@@ -404,6 +410,40 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
       () => setFullScreen(false),
       [setFullScreen],
     );
+
+    const enterPictureInPicture = useCallback(async () => {
+      if (!nativeRef.current) {
+        console.warn('Video Component is not mounted');
+        return;
+      }
+
+      const _enterPictureInPicture = () => {
+        NativeVideoManager.enterPictureInPictureCmd(getReactTag(nativeRef));
+      };
+
+      Platform.select({
+        ios: _enterPictureInPicture,
+        android: _enterPictureInPicture,
+        default: () => {},
+      })();
+    }, []);
+
+    const exitPictureInPicture = useCallback(async () => {
+      if (!nativeRef.current) {
+        console.warn('Video Component is not mounted');
+        return;
+      }
+
+      const _exitPictureInPicture = () => {
+        NativeVideoManager.exitPictureInPictureCmd(getReactTag(nativeRef));
+      };
+
+      Platform.select({
+        ios: _exitPictureInPicture,
+        android: _exitPictureInPicture,
+        default: () => {},
+      })();
+    }, []);
 
     const save = useCallback((options: object) => {
       // VideoManager.save can be null on android & windows
@@ -653,6 +693,8 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
         setVolume,
         getCurrentPosition,
         setFullScreen,
+        enterPictureInPicture,
+        exitPictureInPicture,
         setSource,
       }),
       [
@@ -666,6 +708,8 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
         setVolume,
         getCurrentPosition,
         setFullScreen,
+        enterPictureInPicture,
+        exitPictureInPicture,
         setSource,
       ],
     );
@@ -775,9 +819,8 @@ const Video = forwardRef<VideoRef, ReactVideoProps>(
     const _style: StyleProp<ViewStyle> = useMemo(
       () => ({
         ...StyleSheet.absoluteFillObject,
-        ...(showPoster ? {display: 'none'} : {}),
       }),
-      [showPoster],
+      [],
     );
 
     return (
